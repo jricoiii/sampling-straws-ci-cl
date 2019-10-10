@@ -1,0 +1,31 @@
+---
+title: "Straws-Sample-Confidence-Intervals"
+output: html_document
+---
+
+```{r, message=FALSE}
+library(readr)
+library(tidyverse)
+```
+
+
+Load in the Straws Data Frame
+```{r}
+straws <- read_csv("straws.csv")
+```
+
+
+View the  Straws
+```{r}
+ggplot(straws, aes(x_pos,y_pos, fill=color, color=color))+
+  geom_raster(interpolate=F)+
+  scale_colour_manual(values = c("blue","green" ,"orange", "purple", "red", "yellow"), aesthetics = c("colour", "fill"))+
+  scale_x_continuous(limits=c(0,50))+
+  scale_y_continuous(limits=c(0,50))
+```
+
+Sample 50 Straws
+```{r}
+table(sample(straws$color,50))
+```
+
