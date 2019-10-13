@@ -10,7 +10,7 @@ library(tidyverse)
 
 
 Load in the Straws Data Frame
-```{r}
+```{r, message=FALSE}
 straws <- read_csv("straws.csv")
 ```
 
