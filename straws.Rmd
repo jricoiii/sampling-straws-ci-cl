@@ -10,8 +10,10 @@ library(tidyverse)
 
 
 Load in the Straws Data Frame
-```{r, message=FALSE}
-straws <- read_csv("straws.csv")
+```{r, message = F}
+straws <- read_csv("straws.csv", col_types = cols(X1 = col_skip()))
+glimpse(straws)
+prop.table(table(straws$color))
 ```
 
 
@@ -24,8 +26,145 @@ ggplot(straws, aes(x_pos,y_pos, fill=color, color=color))+
   scale_y_continuous(limits=c(0,50))
 ```
 
-Sample 50 Straws
+
+Set sample size
 ```{r}
-table(sample(straws$color,50))
+sample_size <- 50
 ```
 
+
+```{r}
+sample1 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample1)
+s1_blue <- sample1 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample1))
+prop_blue_1 <- s1_blue$prop1
+prop_blue_1
+```        
+
+```{r}
+sample2 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample2)
+s2_blue <- sample2 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample2))
+prop_blue_2 <- s2_blue$prop1
+prop_blue_2
+```
+
+```{r}
+sample3 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample3)
+s3_blue <- sample3 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample3))
+prop_blue_3 <- s3_blue$prop1
+prop_blue_3
+```
+
+```{r}
+sample4 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample4)
+s4_blue <- sample4 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample4))
+prop_blue_4 <- s4_blue$prop1
+prop_blue_4
+```
+
+```{r}
+sample5 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample5)
+s5_blue <- sample5 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample5))
+prop_blue_5 <- s5_blue$prop1
+prop_blue_5
+```
+
+```{r}
+sample6 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample1)
+s6_blue <- sample6 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample6))
+prop_blue_6 <- s6_blue$prop1
+prop_blue_6
+```        
+
+```{r}
+sample7 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample7)
+s7_blue <- sample7 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample2))
+prop_blue_7 <- s7_blue$prop1
+prop_blue_7
+```
+
+```{r}
+sample8 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample3)
+s8_blue <- sample8 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample8))
+prop_blue_8 <- s8_blue$prop1
+prop_blue_8
+```
+
+```{r}
+sample9 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample9)
+s9_blue <- sample9 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample4))
+prop_blue_9 <- s9_blue$prop1
+prop_blue_9
+```
+
+```{r}
+sample10 <- data.frame(straw_sam = sample(straws$color,sample_size))
+summary(sample5)
+s10_blue <- sample10 %>% 
+  filter(straw_sam=="blue") %>% 
+  summarize(prop1= n()/nrow(sample10))
+prop_blue_10 <- s10_blue$prop1
+prop_blue_10
+```
+
+
+```{r}
+straw_sum <- data.frame(sample = 1:10, blue_prop = c(prop_blue_1,prop_blue_2,prop_blue_3,prop_blue_4,prop_blue_5,prop_blue_6,prop_blue_7,prop_blue_8,prop_blue_9,prop_blue_10 ))
+```
+
+set confidence level by using corresponding z value
+```{r}
+conf_level = 0.75
+z <- qnorm((1-(1-conf_level)/2))
+z
+```
+
+
+```{r}
+straw_ci <- straw_sum %>% 
+  mutate(low_prop = blue_prop - round(z*sqrt(blue_prop*(1-blue_prop)/sample_size),3)) %>% 
+  mutate(high_prop = blue_prop + round(z*sqrt(blue_prop*(1-blue_prop)/sample_size),3))
+```
+
+```{r}
+straw_tidy <- straw_ci %>% 
+  select(sample, low_prop, high_prop) %>% 
+  pivot_longer(names_to = "type",
+               values_to = "prop",
+               cols= -sample)
+```
+
+
+```{r}
+ggplot(data=straw_tidy, aes(y=sample, x=prop, group=sample))+
+  geom_point()+
+  geom_line()+
+  geom_vline(xintercept = 0.1904)+
+  scale_y_continuous(breaks=1:10)
+```
